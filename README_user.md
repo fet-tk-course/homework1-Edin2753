@@ -64,7 +64,7 @@ Funkcija `reduce` prolazi kroz listu i koristi **prvi element** kao početni aku
 **Kada koristiti:**  
 - Kad želiš napraviti **prilagođene izračune po elementima ili po ključevima**, npr. sabiranje projekata i certifikata različitih tipova.  
 
-##Prikaz rezultata
+## Prikaz rezultata
 
 Kod je napravljen tako da:  
 - opcija 1 prikazuje osoblje,  
