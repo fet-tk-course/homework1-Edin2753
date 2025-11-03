@@ -117,7 +117,7 @@ Greška (negativne godine): Broj godina iskustva ne može biti negativan
 Greška (prazna lista ekspertiza): Lista ekspertiza ne može biti prazna
 
 
-##Koristenje AI alata
+## Koristenje AI alata
 
 AI alat je korišten isključivo u svrhu **boljeg razumijevanja novih funkcionalnih operacija** te **davanja sugestija za organizaciju i izgled koda**.  
 Sav kod je **napisan od strane studenta**, dok su svi dijelovi u kojima je AI pružio pomoć **označeni komentarima unutar koda**.  
