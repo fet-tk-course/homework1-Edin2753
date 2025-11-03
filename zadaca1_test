@@ -1,0 +1,219 @@
+// Korišten AI radi objašnjavanja šta je interfejs i kako se koristi
+interface Osoba{
+    fun info(ime:String,prezime:String){
+       	println("Ime: $ime")
+		println("Prezime: $prezime")
+    }
+    fun titula(titula:String){
+        println("Titula: $titula")
+    }
+}
+
+// Korišten AI radi objašnjavanja šta je init i kako se koristi
+open class Inzenjer(
+    var ime: String,
+    var prezime: String,
+    var profesija: String,
+    var godineIskustva: Int,
+    var ekspertize: List<String>
+) : Osoba{
+    init {
+        if (godineIskustva < 0) {
+            throw IllegalArgumentException("Broj godina iskustva ne može biti negativan")
+        }
+
+        if (ekspertize.isEmpty()) {
+            throw IllegalArgumentException("Lista ekspertiza ne može biti prazna")
+        }
+    }
+    
+    fun informacije(){
+        info(ime,prezime)
+    }
+    fun profesionalnaTitula(){
+        titula(profesija)
+    }
+}
+
+// Korišten AI radi objašnjavanja kako child klasa prima varijable iz parent klase
+class SoftverskiInzenjer(
+    ime: String,
+    prezime: String,
+    godineIskustva: Int,
+    ekspertize: List<String>,
+    var brojProjekata: Int           
+) : Inzenjer(ime, prezime, "Softverski inženjer", godineIskustva, ekspertize) {
+    
+    fun uspjesnost(): Double {
+        return brojProjekata * 1.0 / (godineIskustva + 1)
+    }
+}
+
+class InzenjerElektrotehnike(
+    ime: String,
+    prezime: String,
+    godineIskustva: Int,
+    ekspertize: List<String>,
+    var brojCertifikata: Int
+) : Inzenjer(ime, prezime, "Inženjer elektrotehnike", godineIskustva, ekspertize) {
+
+    fun uspjesnost(): Double {
+        return brojCertifikata * 1.0 / (godineIskustva + 1)
+    }
+}
+
+// Korišten AI radi objašnjavanja i razumijevanja fold() funkcije te debugiranja
+fun grupisiPoEkspertizi(inzenjeri: List<Inzenjer>): Map<String, List<Inzenjer>> {
+    return inzenjeri.fold(mutableMapOf<String, MutableList<Inzenjer>>()) { mapa, inzenjer ->
+        if (inzenjer.godineIskustva > 5) {
+            for (ekspertiza in inzenjer.ekspertize) {
+                if (!mapa.containsKey(ekspertiza)) {
+                    mapa[ekspertiza] = mutableListOf()
+                }
+                mapa[ekspertiza]?.add(inzenjer)
+            }
+        }
+        mapa
+    }
+}
+
+// Korišten AI radi objašnjavanja i razumijevanja reduce() funkcije te debugiranja
+fun najiskusnijiPoTipu(inzenjeri: List<Inzenjer>): Map<String, Inzenjer> {
+    val grupaPoTipu = inzenjeri.groupBy { it.profesija }
+
+    val najiskusnijiMapa = mutableMapOf<String, Inzenjer>()
+
+    for ((tip, lista) in grupaPoTipu) {
+        if (lista.isNotEmpty()) {
+            val najiskusniji = lista.reduce { acc, inzenjer ->
+                if (inzenjer.godineIskustva > acc.godineIskustva) inzenjer else acc
+            }
+            najiskusnijiMapa[tip] = najiskusniji
+        }
+    }
+
+    return najiskusnijiMapa
+}
+
+// Korišten AI radi objašnjenja i pomoći pri kreiranju aggregate funkcije (koja ne postoji u Kotlin Playground-u)
+fun <T, R> aggregate(
+    lista: List<T>,
+    pocetnaVrijednost: R,
+    akcija: (R, T) -> R
+): R {
+    var rezultat = pocetnaVrijednost
+    for (element in lista) {
+        rezultat = akcija(rezultat, element)
+    }
+    return rezultat
+}
+
+fun ukupniProjektiICertifikati(inzenjeri: List<Inzenjer>): Int {
+    return aggregate(inzenjeri, 0) { acc, inzenjer ->
+        acc + when (inzenjer) {
+            is SoftverskiInzenjer -> inzenjer.brojProjekata
+            is InzenjerElektrotehnike -> inzenjer.brojCertifikata
+            else -> 0
+        }
+    }
+}
+
+//napisana kao dio test zadace1
+fun mostDiverseEngineer(inzenjeri: List<Inzenjer>): Inzenjer {
+    var best = Inzenjer("", "","", 0, listOf())
+    
+    for (osoba in inzenjeri) {
+        if (osoba.ekspertize > best.ekspertize){
+            best = osoba
+        }
+        else{
+            if (osoba.godineIskustva > best.godineIskustva){
+               best=osoba
+            }
+        }
+    }
+
+    return best
+}
+
+fun main() {
+    // Korišten AI za pomoć pri generisanju 10 inženjera; konkretne varijable i klase napisane ručno
+    val inzenjeri = listOf<Inzenjer>(
+        SoftverskiInzenjer("Marko", "Markovic", 6, listOf("Kotlin", "Java"), 10),
+        SoftverskiInzenjer("Ana", "Anic", 7, listOf("Kotlin", "Git"), 8),
+        SoftverskiInzenjer("Luka", "Lukic", 8, listOf("C++", "Java"), 12),
+        SoftverskiInzenjer("Ivan", "Ivanovic", 4, listOf("JavaScript", "HTML"), 5),
+        SoftverskiInzenjer("Petra", "Petrovic", 9, listOf("Python", "Kotlin"), 7),
+        InzenjerElektrotehnike("Petar", "Petrovic", 8, listOf("PLC","CNC"), 4),
+        InzenjerElektrotehnike("Jelena", "Jelic", 6, listOf("Elektronika","PLC"), 3),
+        InzenjerElektrotehnike("Milan", "Milic", 9, listOf("Robotika","Energetika"), 5),
+        InzenjerElektrotehnike("Nikola", "Nikolic", 7, listOf("Elektro","PLC"), 2),
+        InzenjerElektrotehnike("Ivana", "Ivanovic", 4, listOf("Elektronika","PLC"), 1)
+    )
+	val inzenjeri_test = listOf<Inzenjer>(
+    	SoftverskiInzenjer("Amina", " ", 8, listOf("Kotlin", "Java", "SQL"), 10),
+        SoftverskiInzenjer("Elma", " ", 12, listOf("Java", "Kotlin", "SQL"), 8),
+    	InzenjerElektrotehnike("Faruk", " ", 10, listOf("FPGA","Embedded","Circuits"), 4)
+    )
+   
+   // 1 -> prikaz osoblja | 2 -> prikaz funkcija | 3 -> sve | 4 -> prikaz grešaka
+    val opcija = 5
+
+    val prikaziOsoblje = opcija == 1 || opcija == 3
+    val prikaziFunkcije = opcija == 2 || opcija == 3
+	val prikaziGresku = opcija == 4
+    val prikaziTest = opcija == 5
+    
+    if (prikaziOsoblje) {
+        println("--- Osoblje ---")
+        for (inzenjer in inzenjeri) {
+            when (inzenjer) {
+                is SoftverskiInzenjer -> println("${inzenjer.ime} ${inzenjer.prezime} – ${inzenjer.profesija} – ${inzenjer.godineIskustva} godina – Projekti: ${inzenjer.brojProjekata} – Ekspertize: ${inzenjer.ekspertize}")
+                is InzenjerElektrotehnike -> println("${inzenjer.ime} ${inzenjer.prezime} – ${inzenjer.profesija} – ${inzenjer.godineIskustva} godina – Certifikati: ${inzenjer.brojCertifikata} – Ekspertize: ${inzenjer.ekspertize}")
+            }
+        }
+        println()
+    }
+
+    if (prikaziFunkcije) {
+        println("--- Grupisanje po ekspertizama (fold) ---")
+        val grupaPoEkspertizama = grupisiPoEkspertizi(inzenjeri)
+        for ((ekspertiza, grupa) in grupaPoEkspertizama) {
+            println("$ekspertiza: ${grupa.map { it.ime + " " + it.prezime }}")
+        }
+		println()
+        
+        println("--- Najiskusniji po tipu (reduce) ---")
+        val najiskusnijiMapa = najiskusnijiPoTipu(inzenjeri)
+        for ((tip, inzenjer) in najiskusnijiMapa) {
+            println("Najiskusniji $tip: ${inzenjer.ime} ${inzenjer.prezime} – ${inzenjer.godineIskustva} godina")
+        }
+        println()
+
+        println("--- Ukupan broj projekata i certifikata (aggregate) ---")
+        val ukupno = ukupniProjektiICertifikati(inzenjeri)
+        println("Ukupan broj projekata i certifikata u kompaniji: $ukupno")
+    }
+    
+    if (prikaziGresku) {
+        try {
+		    val losInzenjer1 = SoftverskiInzenjer("Negativ", "Godine", -5,listOf("Kotlin", "Java"), 3)
+        } catch (e: Exception) {
+        println("Greška (negativne godine): ${e.message}")
+        }
+
+        try {
+        val losInzenjer2 = InzenjerElektrotehnike("Prazna", "Lista", 5,emptyList(), 2)
+        } catch (e: Exception) {
+        println("Greška (prazna lista ekspertiza): ${e.message}")
+        }
+        
+    }
+    
+    if(prikaziTest){
+        println("--- Most Diverse Engineer is ---")
+        val winner = mostDiverseEngineer(inzenjeri_test)
+        println("${winner.ime} ${winner.prezime} – ${winner.profesija} – ${winner.godineIskustva} godina – Ekspertize: ${winner.ekspertize}")
+        
+    }
+}
